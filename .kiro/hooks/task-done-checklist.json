@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Task done: definition of done checklist",
+      "trigger": "PostTaskExec",
+      "description": "After a spec task completes, verifies the definition of done and updates project memory.",
+      "action": {
+        "type": "agent",
+        "prompt": "A spec task was just completed. Verify the definition of done from tdd.md: tests pass and linters are clean. Then verify project-memory.md: Check that CHANGELOG.md and README.md have been updated."
+      }
+    }
+  ]
+}

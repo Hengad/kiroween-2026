@@ -1,0 +1,36 @@
+# IMPORTANT: never ignore .kiro/ or its sub-folders. The hackathon requires them in the repo.
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Node / Svelte
+node_modules/
+.svelte-kit/
+core/frontend/dist/
+*/frontend/build/
+playwright-report/
+test-results/
+
+# Local data and secrets
+.env
+.env.*
+!.env.example
+*.db
+*.sqlite
+*.sqlite3
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+.idea/

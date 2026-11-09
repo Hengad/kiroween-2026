@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "TDD guard",
+      "trigger": "PreToolUse",
+      "description": "Before any file write, reminds the agent that production code requires a failing test first.",
+      "matcher": "fs_write|str_replace|fs_append",
+      "action": {
+        "type": "agent",
+        "prompt": "TDD check: if this write adds or changes production code (not tests, docs, steering, config or type-only changes), confirm that a failing test requiring this behavior already exists and was run and seen failing. If not, write and run that test first instead."
+      }
+    }
+  ]
+}
