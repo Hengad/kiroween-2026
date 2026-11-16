@@ -12,7 +12,7 @@ siloless/
 ├── core/                       # the Siloless engine (shared by all apps)
 │   ├── backend/
 │   │   ├── pyproject.toml      # package: siloless
-│   │   ├── src/siloless/       # memory/ connectors/ work/ notifications/ events/ ask/ tracking/ monitoring/ processes/ api/ components.py plugins.py app.py
+│   │   ├── src/siloless/       # access/ storage/ memory/ connectors/ work/ notifications/ events/ ask/ tracking/ monitoring/ processes/ api/ components.py plugins.py app.py
 │   │   └── tests/              # unit/ integration/ properties/
 │   └── frontend/
 │       ├── package.json        # package: @siloless/ui

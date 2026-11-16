@@ -1,0 +1,7 @@
+{
+  "name": "siloless-monorepo",
+  "private": true,
+  "workspaces": [
+    "core/frontend"
+  ]
+}

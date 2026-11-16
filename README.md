@@ -77,7 +77,7 @@ siloless-festival/    Demo app 2: config, simulation, frontend
 
 ## Getting started
 
-> Not runnable yet. The commands below are the planned workflow and will work once the scaffold exists.
+> The test and check commands work now. The demo apps do not exist yet, so the "run a demo app" commands below are the planned workflow.
 
 Prerequisites: Python 3.12+, [uv](https://docs.astral.sh/uv/), Node.js LTS.
 
@@ -87,6 +87,22 @@ npm install
 uv run pytest
 npm run test --workspaces --if-present -- --run
 ```
+
+Try the engine API on its own (the demo apps do not exist yet). Start the server in one terminal:
+
+```powershell
+python -m uv run uvicorn siloless.app:create_app --factory
+```
+
+If it says `Failed to spawn: uvicorn`, run `python -m uv sync` first. Then open <http://127.0.0.1:8000/docs>. It stores data in `siloless.db` in the current folder (set `SILOLESS_DATABASE_URL` to change it). A short tour:
+
+1. `PUT /principals/{id}` to create people and groups, for example `user:anna`, `user:bo` and `group:maintenance`, then `PUT /users/{id}/memberships` to put Anna in the group.
+2. `POST /ingest/records` to push a document with `"acl": ["group:maintenance"]`. Post it again with changed `content` to create version 2.
+3. Click **Authorize** and enter `user:anna`. Then `GET /records/{record_id}/versions` shows every version, newest first, with the latest marked `is_current`.
+4. Authorize as a user outside the group. The same call returns 404, exactly as for a record that does not exist.
+5. `GET /search?q=...` searches the current versions you may read.
+6. `POST /work-items` creates a question, request, incident or action, optionally citing record versions in `evidence`. `POST /work-items/{id}/claim` marks it "investigating". A second person claiming it gets a 409 naming the owner. `POST /work-items/{id}/transition` moves it along its lifecycle, and `GET /work-items/{id}/history` shows every step.
+7. To use entities, set `SILOLESS_ENTITY_TYPES='["machine"]'` before starting (see `.env.example`), then `POST /ingest/entities` and `POST /ingest/relations` link records to them.
 
 Run a demo app (two terminals):
 
@@ -112,8 +128,9 @@ Each app (`siloless-factory/`, `siloless-festival/`) has its own configuration (
 | Part | Status |
 |---|---|
 | Steering, README, changelog, hooks | Done |
-| Core engine backend | Not started |
-| Core UI library | Not started |
+| Workspace scaffold (uv, npm, test tooling) | Done |
+| Core engine backend | Spec 1 (memory and work foundation) is built, 17 of 17 tasks: permission-aware versioned Records, search, Entities and Relations, Work Items with claims and a strict lifecycle, an append-only event log, an Alembic baseline, and the HTTP API. 320 tests, including property tests. Question tracking, Ask, change monitoring and the process builder are not built yet. |
+| Core UI library | Scaffold only: one `ConnectionStatus` component |
 | siloless-factory | Not started; simulation details pending |
 | siloless-festival | Not started; simulation details pending |
 

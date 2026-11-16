@@ -10,7 +10,7 @@ fileMatchPattern: '**/*.py'
 - Dependencies are injected: clock, ID generator, random generator, repositories and the event bus come in through constructors or FastAPI dependencies. No module-level singletons holding state.
 - Every repository read method takes the requesting `Principal` and applies ACL filtering in the query itself. There is no "unfiltered" read in the public API; internal system reads use an explicit system principal.
 - Write to the Event Log in the same transaction as the state change it describes.
-- Async for I/O (API handlers, connectors, WebSockets). Keep pure domain logic synchronous and side-effect free so it is easy to test.
+- Storage and domain services are synchronous. FastAPI runs plain `def` route handlers in its thread pool. Use async for WebSockets and connectors, and call services from them with `run_in_threadpool`. Keep pure domain logic side-effect free so it is easy to test.
 - Routers stay thin: validate input with Pydantic, call a service, map the result to a schema. Return problem-detail style errors with stable error codes.
 - Use parameterized queries only (SQLAlchemy expressions or bound parameters). Never format SQL strings with user input.
 - Treat all ingested content (emails, documents, web pages, sensor payloads) as untrusted data: validate at the connector boundary, cap sizes, and never execute or evaluate it.

@@ -81,6 +81,8 @@ Resolved Work Items, with their answers and resolutions, become Records in memor
 
 Shared infrastructure (always present):
 
+- `access/`: Principals, memberships, ACLs and the read filters that every query uses. Memory and work both depend on it.
+- `storage/`: database engine and transactions, SQLAlchemy models, schema installation (search index, event log triggers) and migrations.
 - `memory/`: Records, Entities, Relations, versioning, search, ACL filtering, authoritative-Record resolution, and cited answer retrieval. Ask and tracking both use it, so neither depends on the other.
 - `connectors/`: the `Connector` protocol plus generic connectors (webhook/HTTP push, file import, polling) and the built-in communication channel. Domain connectors live in apps.
 - `work/`: Work Items, claims, response windows, assignment policy, status lifecycle, history.
@@ -128,7 +130,7 @@ Custom code is passed explicitly at startup; a Plugin is an optional object that
 
 These must hold at all times and each should be covered by property-based tests:
 
-- **Permission safety.** A query on behalf of Principal P never returns a Record whose ACL excludes P, including through search results, answers, Citations, relations, evidence links and Work Item links. Derived objects inherit the most restrictive ACL of their evidence.
+- **Permission safety.** A query on behalf of Principal P never returns a Record whose ACL excludes P, including through search results, answers, Citations, relations, evidence links and Work Item links. A derived object (Relation, Work Item) is readable only by a Principal who can read every Record version it derives from. An older Record version is readable only if P can also read the Record's current version, so revoked access hides history.
 - **At most one owner, never forgotten.** A Work Item never has more than one owner. An unowned Work Item is either `awaiting_acceptance` or `open` with a running Response Window; when the window expires it is assigned, falling back to the triage owner if the Assignment Policy finds nobody.
 - **One claim wins.** If two people claim the same Work Item, exactly one claim succeeds and the other is told who owns it.
 - **Valid lifecycle.** Work Item status follows the allowed transition graph: `awaiting_acceptance → resolved` (asker accepts), `awaiting_acceptance → open` (asker declines), `open → investigating` (claim), `open → assigned` (auto or manual), `open → resolved` (answered directly), `assigned → investigating`, `investigating → blocked/resolved`, `blocked → investigating`, `resolved → reopened`, `reopened → investigating/assigned`. A question with an `answered` outcome starts in `awaiting_acceptance`; every other Work Item starts in `open`. Invalid transitions are rejected.
